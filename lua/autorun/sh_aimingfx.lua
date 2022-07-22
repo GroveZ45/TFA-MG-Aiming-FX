@@ -43,12 +43,26 @@ if CLIENT then
 		if not aimingfx_enabled:GetBool() then return end
 		if ply:IsNPC() then return end
 
+		-- this code is disgusting but it works
 		if wep.Base == "mg_base" then
 			ADSProgress = wep:GetAimDelta()
-		else
-			ADSProgress = wep.IronSightsProgress or 0
+		elseif wep.Base == "tfa_gun_base" then
+			ADSProgress = wep.IronSightsProgress or 1
+		elseif wep.Base == "arccw_base" then 
+			if wep:GetNWState() == (1) then 
+			ADSProgress = wep:GetNWState() 
+		else -- if NWState doesn't equal 1
+			return -- don't run visual stuff 
+		end -- end if
+	elseif wep.Base == "arccw_mw2_abase" then -- this for some reason has its own base.
+		if wep:GetNWState() == (1) then -- if i do ... or "arccw_mw2_base", the game errors out for some reason when switching to tfa weapons
+			ADSProgress = wep:GetNWState() 
+		else 
+			return  
+		end 
+	else -- if all if statements return false
+			return -- dont run visual stuff
 		end
-
 		local VignetteTexture = surface.GetTextureID("aimingfx/vignette/vignette")
 
 		local AimingFXVignetteMultiplier = aimingfx_vignette_intensity_initially_multiplier:GetFloat() + (ADSProgress * (-aimingfx_vignette_intensity_sighted_multiplier:GetFloat() * aimingfx_vignette_intensity_initially_multiplier:GetFloat()))
